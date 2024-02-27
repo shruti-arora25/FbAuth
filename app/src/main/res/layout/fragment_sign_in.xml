@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".SignInFrag">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Login Page"
+            android:textSize="25sp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="55dp">
+
+
+                <EditText
+                    android:id="@+id/enailLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:textSize="20sp"
+                    android:padding="10dp"
+                    android:hint="username"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/blueGreen"
+                    android:drawableLeft="@drawable/baseline_email_24"
+
+                    android:background="@drawable/textbg"
+                    android:inputType="textEmailAddress" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="30dp">
+
+
+
+                <EditText
+                    android:id="@+id/passwordLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:textSize="20sp"
+                    android:padding="10dp"
+                    android:background="@drawable/textbg"
+                    android:hint="password"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/blueGreen"
+                    android:drawableLeft="@drawable/baseline_lock_24"
+                    android:inputType="textPassword" />
+
+
+            </LinearLayout>
+
+
+
+            <android.widget.Button
+                android:id="@+id/signIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:gravity="center"
+                android:padding="2dp"
+                android:background="@drawable/background"
+                android:text="Sign In"
+                android:textSize="25sp"
+                android:layout_marginTop="11dp"
+                ></android.widget.Button>
+
+
+
+
+
+
+            <android.widget.Button
+                android:id="@+id/createAccount"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create an Account "
+                ></android.widget.Button>
+
+
+        </LinearLayout>
+
+
+
+
+
+    </LinearLayout>
+
+
+</layout>

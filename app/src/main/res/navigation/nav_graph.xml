@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/signUpFrag">
+
+    <fragment
+        android:id="@+id/signUpFrag"
+        android:name="com.example.firebaseone.SignUpFrag"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFrag_to_signInFrag"
+            app:destination="@id/signInFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInFrag"
+        android:name="com.example.firebaseone.SignInFrag"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFrag_to_signUpFrag"
+            app:destination="@id/signUpFrag" />
+        <action
+            android:id="@+id/action_signInFrag_to_homeFrag"
+            app:destination="@id/homeFrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFrag"
+        android:name="com.example.firebaseone.HomeFrag"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+</navigation>
