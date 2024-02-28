@@ -18,9 +18,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures{
-        dataBinding=true
-        viewBinding=true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
 
     buildTypes {
@@ -42,6 +42,14 @@ android {
 }
 
 dependencies {
+    val activityversion = "1.8.2"
+
+    implementation("androidx.activity:activity-ktx:$activityversion")
+
+
+
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

@@ -2,4 +2,7 @@
     <string name="app_name">FirebaseOne</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="client_id">205067464484-s25a1klevqu06m1363km43kc6ag6cbe1.apps.googleusercontent.com</string>
+
+
 </resources>

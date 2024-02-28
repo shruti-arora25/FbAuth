@@ -1,7 +1,11 @@
 package com.example.firebaseone
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,33 +14,81 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.firebaseone.databinding.FragmentSignInBinding
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 class SignInFrag : Fragment() {
-    private lateinit var bind:FragmentSignInBinding
+    private lateinit var bind: FragmentSignInBinding
     private lateinit var fbAuth: FirebaseAuth
+    private lateinit var signInClient: GoogleSignInClient
+
+
+    override fun onAttach(context: Context) { // Or onCreate(savedInstanceState: Bundle?)
+        super.onAttach(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        bind= FragmentSignInBinding.inflate(inflater,container,false)
+        bind = FragmentSignInBinding.inflate(inflater, container, false)
+
+
         return bind.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        fbAuth=FirebaseAuth.getInstance()
+        super.onViewCreated(view, savedInstanceState)
 
+        fbAuth = FirebaseAuth.getInstance()
+        Log.d("ko", "Part1")
+
+        val launcher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    Log.d("ko", "Part2")
+
+                    handleResults(task)
+                    Log.d("ko", "Part3")
+
+                }
+            }
+
+        bind = FragmentSignInBinding.inflate(layoutInflater)
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.client_id))
+            .requestEmail()
+            .build()
+        Log.d("ko", "Part4")
+
+
+        bind.google.setOnClickListener {
+            Log.d("ko", "Part5")
+
+            signInClient = GoogleSignIn.getClient(requireActivity(), gso)
+            val signinIntent = signInClient.signInIntent
+            launcher.launch(signinIntent) // Use the declared launcher
+        }
+
+
+        //custom authentication
         bind.signIn.setOnClickListener {
 
             val email = bind.enailLogin.text.toString()
@@ -45,10 +97,18 @@ class SignInFrag : Fragment() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        findNavController().navigate(R.id.action_signInFrag_to_homeFrag,null,NavOptions.Builder().setPopUpTo(R.id.signInFrag,true).build())
+                        findNavController().navigate(
+                            R.id.action_signInFrag_to_homeFrag,
+                            null,
+                            NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
+                        )
 
                     } else {
-                        Toast.makeText(context, "Incorrect Email id or password", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Incorrect Email id or password",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
@@ -59,17 +119,21 @@ class SignInFrag : Fragment() {
 
 
         bind.createAccount.setOnClickListener {
-            findNavController().navigate(R.id.action_signInFrag_to_signUpFrag,null,NavOptions.Builder().setPopUpTo(R.id.signUpFrag,true).build())
+            findNavController().navigate(
+                R.id.action_signInFrag_to_signUpFrag,
+                null,
+                NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
+            )
         }
 
         bind.ForgotPass.setOnClickListener {
-            val builder= context?.let { it1 -> AlertDialog.Builder(it1) }
-            val view=layoutInflater.inflate(R.layout.dialogbox,null)
-            val userEmail=view.findViewById<EditText>(R.id.editTextTextEmailAddress)
+            val builder = context?.let { it1 -> AlertDialog.Builder(it1) }
+            val view = layoutInflater.inflate(R.layout.dialogbox, null)
+            val userEmail = view.findViewById<EditText>(R.id.editTextTextEmailAddress)
 
 
             builder?.setView(view)
-            val dialog=builder?.create()
+            val dialog = builder?.create()
             view.findViewById<Button>(R.id.reset).setOnClickListener {
                 compareEMail(userEmail)
                 dialog?.dismiss()
@@ -78,7 +142,7 @@ class SignInFrag : Fragment() {
                 dialog?.dismiss()
             }
 
-            if (dialog?.window!=null){
+            if (dialog?.window != null) {
                 dialog.window!!.setBackgroundDrawable(ColorDrawable(1))
             }
             dialog?.show()
@@ -86,19 +150,69 @@ class SignInFrag : Fragment() {
 
     }
 
-    private fun compareEMail(email:EditText){
-        if (email.text.toString().isEmpty()){
+
+    private fun compareEMail(email: EditText) {
+        if (email.text.toString().isEmpty()) {
+            Toast.makeText(context, "Enter Email Address correctly", Toast.LENGTH_SHORT).show()
             return
         }
-        if (!Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()) {
             return
         }
         fbAuth.sendPasswordResetEmail(email.text.toString()).addOnCompleteListener {
             if (it.isSuccessful)
-                Toast.makeText(context,"Check Your Mail",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Check Your Mail", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+//    private fun signInGoogle() {
+//        val signinIntent = signInClient.signInIntent
+//        val launcher =
+//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//                if (result.resultCode == Activity.RESULT_OK) {
+//                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+//                    handleResults(task)
+//
+//                }
+//
+//
+//            }
+//        launcher.launch(signinIntent)
+//
+//    }
+
+
+    private fun handleResults(task: Task<GoogleSignInAccount>) {
+        if (task.isSuccessful) {
+            val account: GoogleSignInAccount? = task.result
+            Log.d("ko", "Part1.1")
+
+            if (account != null) {
+                Log.d("ko", "Part1.2")
+
+                updateUI(account)
+            }
+        } else {
+            Toast.makeText(context, "try again", Toast.LENGTH_SHORT).show()
+
         }
 
     }
 
 
+    private fun updateUI(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        fbAuth.signInWithCredential(credential).addOnCompleteListener {
+            if (it.isSuccessful) {
+                findNavController().navigate(R.id.action_signInFrag_to_homeFrag)
+
+            } else {
+                Toast.makeText(context, "Cant login", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
+
+
+}
