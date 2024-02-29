@@ -2,6 +2,7 @@ package com.example.firebaseone
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -54,6 +55,10 @@ class SignUpFrag : Fragment() {
 
 
         bind.register.setOnClickListener {
+
+            //  save()
+
+
             val email = bind.emailSignUp.text.toString()
             val password = bind.passwordSignUp.text.toString()
             val cpassword = bind.confrmpasswordSignUp.text.toString()
@@ -65,11 +70,15 @@ class SignUpFrag : Fragment() {
                     fbAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
 
                         if (it.isSuccessful) {
-                            findNavController().navigate(R.id.action_signUpFrag_to_signInFrag,null,NavOptions.Builder().setPopUpTo(R.id.signUpFrag,true).build())
-                            save()
+                            findNavController().navigate(
+                                R.id.action_signUpFrag_to_signInFrag,
+                                null,
+                                NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
+                            )
 
                         } else {
-                            Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT)
+                                .show()
                         }
 
                     }
@@ -78,21 +87,25 @@ class SignUpFrag : Fragment() {
                     Toast.makeText(context, "Password is not same", Toast.LENGTH_SHORT).show()
 
                 }
-            }
-
-            else {
+            } else {
                 Toast.makeText(context, "Field cant be empty!", Toast.LENGTH_SHORT).show()
             }
+        }
+
+
+
+            bind.AlreadyAccLogin.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_signUpFrag_to_signInFrag,
+                    null,
+                    NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
+                )
+
+            }
+
 
         }
 
-                bind.AlreadyAccLogin.setOnClickListener {
-                    findNavController().navigate(R.id.action_signUpFrag_to_signInFrag,null,NavOptions.Builder().setPopUpTo(R.id.signUpFrag,true).build())
-
-                }
-
-
-            }
 
     private fun save() {
         val email=bind.emailSignUp.text.toString()
@@ -103,19 +116,22 @@ class SignUpFrag : Fragment() {
             EMAIL to email,
             PASSWORD to pw,
             time to timestamp
-
         )
 
+
         db.collection(COLLECTION).document(DOCUMENTS).set(map).addOnSuccessListener {
-            Toast.makeText(context,"Successfullly saved",Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(),"Successfullly saved",Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_signUpFrag_to_signInFrag,null,NavOptions.Builder().setPopUpTo(R.id.signUpFrag,true).build())
+
 
         }
-            .addOnFailureListener {
-                Toast.makeText(context,"Error Occurred",Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+             Log.e("FirestoreError", "Error occurred: ${e.message}", e)
+            Toast.makeText(requireActivity(), "Error Occurred: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+        // Toast.makeText(this, "Error Occurred", Toast.LENGTH_SHORT).show()
 
 
-            }
-
-}
+    }
 
 }

@@ -29,12 +29,19 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.Date
 
 
 class SignInFrag : Fragment() {
     private lateinit var bind: FragmentSignInBinding
     private lateinit var fbAuth: FirebaseAuth
     private lateinit var signInClient: GoogleSignInClient
+
+    private val db = Firebase.firestore
+
+    private val Address = "email"
+    private val Credential = "password"
+    private val time = "Time"
 
 
     override fun onAttach(context: Context) { // Or onCreate(savedInstanceState: Bundle?)
@@ -73,6 +80,7 @@ class SignInFrag : Fragment() {
 
         bind = FragmentSignInBinding.inflate(layoutInflater)
 
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.client_id))
             .requestEmail()
@@ -96,14 +104,14 @@ class SignInFrag : Fragment() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
-
-                        findNavController().navigate(
-                            R.id.action_signInFrag_to_homeFrag,
-                            null,
-                            NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
-                        )
-
-                    } else {
+                        save()
+//                        findNavController().navigate(
+//                            R.id.action_signInFrag_to_homeFrag,
+//                            null,
+//                            NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
+//                        )
+                    }
+                    else {
                         Toast.makeText(
                             context,
                             "Incorrect Email id or password",
@@ -113,7 +121,7 @@ class SignInFrag : Fragment() {
                 }
 
             } else {
-                Toast.makeText(context, "fields cant be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "fields can't be empty", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -208,6 +216,48 @@ class SignInFrag : Fragment() {
             }
         }
 
-    }}
+    }
+
+
+    private fun save() {
+        val email = bind.enailLogin.text.toString().trim()
+        val pw = bind.passwordLogin.text.toString().trim()
+        val timestamp: Long = Date().getTime()
+
+        val map = hashMapOf(
+            Address to email,
+            Credential to pw,
+            time to timestamp
+
+        )
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            db.collection("USER").document(userId).set(map).addOnSuccessListener {
+
+
+                Toast.makeText(requireActivity(), "Successfullly saved", Toast.LENGTH_SHORT).show()
+
+                findNavController().navigate(
+                    R.id.action_signInFrag_to_homeFrag,
+                    null,
+                    NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
+                )
+
+            }
+                .addOnFailureListener { e ->
+                    // Log.e("FirestoreError", "Error occurred: ${e.message}", e)
+                    Toast.makeText(
+                        requireActivity(),
+                        "Error Occurred: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            // Toast.makeText(this, "Error Occurred", Toast.LENGTH_SHORT).show()
+
+
+        }
+
+    }
+}
 
 
