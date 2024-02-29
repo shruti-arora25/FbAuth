@@ -12,11 +12,25 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.firebaseone.databinding.FragmentSignUpBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.util.Date
 
 
 class SignUpFrag : Fragment() {
     private lateinit var bind: FragmentSignUpBinding
     private lateinit var fbAuth: FirebaseAuth
+
+
+    private val db=Firebase.firestore
+
+    private val EMAIL="email"
+    private val PASSWORD="password"
+    private val DOCUMENTS="documents"
+    private val COLLECTION="colllection"
+    private val time="Register Time"
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +66,7 @@ class SignUpFrag : Fragment() {
 
                         if (it.isSuccessful) {
                             findNavController().navigate(R.id.action_signUpFrag_to_signInFrag,null,NavOptions.Builder().setPopUpTo(R.id.signUpFrag,true).build())
+                            save()
 
                         } else {
                             Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
@@ -77,10 +92,30 @@ class SignUpFrag : Fragment() {
                 }
 
 
+            }
 
+    private fun save() {
+        val email=bind.emailSignUp.text.toString()
+        val pw=bind.passwordSignUp.text.toString()
+        val timestamp: Long = Date().getTime()
 
+        val map = hashMapOf(
+            EMAIL to email,
+            PASSWORD to pw,
+            time to timestamp
+
+        )
+
+        db.collection(COLLECTION).document(DOCUMENTS).set(map).addOnSuccessListener {
+            Toast.makeText(context,"Successfullly saved",Toast.LENGTH_SHORT).show()
+
+        }
+            .addOnFailureListener {
+                Toast.makeText(context,"Error Occurred",Toast.LENGTH_SHORT).show()
 
 
             }
 
-        }
+}
+
+}

@@ -26,6 +26,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 class SignInFrag : Fragment() {
@@ -62,10 +65,8 @@ class SignInFrag : Fragment() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                    Log.d("ko", "Part2")
 
                     handleResults(task)
-                    Log.d("ko", "Part3")
 
                 }
             }
@@ -76,11 +77,9 @@ class SignInFrag : Fragment() {
             .requestIdToken(getString(R.string.client_id))
             .requestEmail()
             .build()
-        Log.d("ko", "Part4")
 
 
         bind.google.setOnClickListener {
-            Log.d("ko", "Part5")
 
             signInClient = GoogleSignIn.getClient(requireActivity(), gso)
             val signinIntent = signInClient.signInIntent
@@ -97,6 +96,7 @@ class SignInFrag : Fragment() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
+
                         findNavController().navigate(
                             R.id.action_signInFrag_to_homeFrag,
                             null,
@@ -166,45 +166,41 @@ class SignInFrag : Fragment() {
 
     }
 
-//    private fun signInGoogle() {
-//        val signinIntent = signInClient.signInIntent
-//        val launcher =
-//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//                if (result.resultCode == Activity.RESULT_OK) {
-//                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-//                    handleResults(task)
-//
-//                }
-//
-//
-//            }
-//        launcher.launch(signinIntent)
-//
-//    }
+    private fun signInGoogle() {
+        val signinIntent = signInClient.signInIntent
+        val launcher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    handleResults(task)
+
+                }
+
+
+            }
+        launcher.launch(signinIntent)
+
+    }
 
 
     private fun handleResults(task: Task<GoogleSignInAccount>) {
         if (task.isSuccessful) {
             val account: GoogleSignInAccount? = task.result
-            Log.d("ko", "Part1.1")
 
             if (account != null) {
-                Log.d("ko", "Part1.2")
-
                 updateUI(account)
             }
         } else {
             Toast.makeText(context, "try again", Toast.LENGTH_SHORT).show()
-
         }
 
     }
-
 
     private fun updateUI(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         fbAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
+
                 findNavController().navigate(R.id.action_signInFrag_to_homeFrag)
 
             } else {
@@ -212,7 +208,6 @@ class SignInFrag : Fragment() {
             }
         }
 
-    }
+    }}
 
 
-}

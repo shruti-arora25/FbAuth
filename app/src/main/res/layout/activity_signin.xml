@@ -6,18 +6,85 @@
     android:layout_height="match_parent"
     tools:context=".Signin">
 
-    <android.widget.Button
-        android:id="@+id/googleActivity"
+
+    <EditText
+        android:id="@+id/EMAIL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register using google account"
+        android:layout_marginTop="122dp"
         android:background="@drawable/textbg"
+        android:drawableLeft="@drawable/baseline_email_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/blueGreen"
+        android:ems="10"
+
+        android:hint="username"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/PASSWORD"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/PASSWORD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="39dp"
+        android:background="@drawable/textbg"
+        android:drawableLeft="@drawable/baseline_lock_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/blueGreen"
+        android:ems="10"
+        android:hint="password"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/SIGNIN"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.548"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <android.widget.Button
+        android:id="@+id/SIGNIN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/background"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="LOG In"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/googleActivity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <android.widget.Button
+        android:id="@+id/googleActivity"
+
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="22dp"
-        android:padding="10dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="661dp"
+        android:layout_marginEnd="93dp"
+        android:layout_marginBottom="683dp"
+        android:background="@drawable/textbg"
         android:drawableLeft="@drawable/search"
         android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:text="Register using google account"
         android:textSize="15sp"
-        tools:ignore="MissingConstraints"></android.widget.Button>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
