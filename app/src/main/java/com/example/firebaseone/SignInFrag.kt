@@ -29,7 +29,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 
 class SignInFrag : Fragment() {
@@ -78,7 +80,6 @@ class SignInFrag : Fragment() {
                 }
             }
 
-        bind = FragmentSignInBinding.inflate(layoutInflater)
 
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -224,10 +225,13 @@ class SignInFrag : Fragment() {
         val pw = bind.passwordLogin.text.toString().trim()
         val timestamp: Long = Date().getTime()
 
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val formattedDate = sdf.format(Date(timestamp))
+
         val map = hashMapOf(
             Address to email,
             Credential to pw,
-            time to timestamp
+            time to formattedDate
 
         )
         val userId = FirebaseAuth.getInstance().currentUser?.uid
