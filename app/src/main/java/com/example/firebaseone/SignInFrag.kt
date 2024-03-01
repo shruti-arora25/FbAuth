@@ -119,11 +119,11 @@ class SignInFrag : Fragment() {
                         save()
 
 
-                        findNavController().navigate(
-                            R.id.action_signInFrag_to_homeFrag,
-                            null,
-                            NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
-                        )
+//                        findNavController().navigate(
+//                            R.id.action_signInFrag_to_homeFrag,
+//                            null,
+//                            NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
+                       // )
                     } else {
                         Toast.makeText(
                             context,
@@ -195,7 +195,7 @@ class SignInFrag : Fragment() {
                 db.collection("USER").document(userId).set(map).addOnSuccessListener {
 
 
-                    Toast.makeText(context, "Successfullly saved", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Successfullly saved", Toast.LENGTH_SHORT)
                         .show()
 
                     findNavController().navigate(
