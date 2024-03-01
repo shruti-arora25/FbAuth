@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_signUpFrag_to_signInFrag"
             app:destination="@id/signInFrag" />
+        <action
+            android:id="@+id/action_signUpFrag_to_homeFrag"
+            app:destination="@id/homeFrag" />
     </fragment>
     <fragment
         android:id="@+id/signInFrag"
@@ -30,5 +33,9 @@
         android:id="@+id/homeFrag"
         android:name="com.example.firebaseone.HomeFrag"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFrag_to_signInFrag"
+            app:destination="@id/signInFrag" />
+    </fragment>
 </navigation>

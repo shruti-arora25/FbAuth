@@ -1,16 +1,22 @@
 package com.example.firebaseone
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.firebaseone.databinding.ActivitySigninBinding
+import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -18,7 +24,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.Date
 
-const val REQUEST_CODE = 0
 
 
 class Signin : AppCompatActivity() {
@@ -28,12 +33,27 @@ class Signin : AppCompatActivity() {
     private lateinit var fbAuth: FirebaseAuth
     private lateinit var signInClient: GoogleSignInClient
 
+
+
     private val db = Firebase.firestore
 
     private val Address = "email"
     private val Credential = "password"
     private val time="Time"
 
+    private val startForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            //in getSignedInAccount passes the parameter of data of type intent
+
+            val signInCred = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            //type task<GOOGLE SignIn ACC>
+                updateUI(signInCred.result)    //using .result will only contain account
+
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,76 +63,51 @@ class Signin : AppCompatActivity() {
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.client_id))
+
             .requestEmail()
             .build()
 
         signInClient = GoogleSignIn.getClient(this, gso)
+
         fbAuth = FirebaseAuth.getInstance()
+
+        bind.googleActivity.setOnClickListener {
+
+            signInWithGoogle()
+        }
+
 
         bind.SIGNIN.setOnClickListener {
             save()
-
-        }
-
-
-        bind.googleActivity.setOnClickListener {
-            signInWithGoogle()
-
         }
     }
+
 
     private fun signInWithGoogle() {
-        Log.d("TAG---->", "signInIntent")
-        val si: Intent = signInClient.signInIntent
-        startActivityForResult(si, REQUEST_CODE)
+
+            val intent = signInClient.signInIntent
+            startForResult.launch(intent)
+
 
     }
-
-    @Deprecated("Deprecated in Java")
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE) {
-
-            Log.d("TAG", "log")
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-            Log.d("TAG---->", "TASK $task")
-            handleResult(task)
-        }
-    }
-
-    private fun handleResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
-            if (account != null) {
-                updateUI(account)
-                Log.d("TAG---->", "account $account")
-            }
-        } catch (e: ApiException) {
-            e.printStackTrace()
-
-            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun updateUI(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
         fbAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.d("TAG---->", "fbAuth $it")
+
+
+//                fbAuth.currentUser
 
                 val i = Intent(this, MainActivity2::class.java)
                 startActivity(i)
 
-            } else {
 
+            } else {
                 Toast.makeText(this, "Cant login", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
-
 
     private fun save() {
         val email = bind.EMAIL.text.toString().trim()

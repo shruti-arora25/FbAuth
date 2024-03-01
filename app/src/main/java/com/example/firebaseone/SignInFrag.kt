@@ -68,7 +68,6 @@ class SignInFrag : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         fbAuth = FirebaseAuth.getInstance()
-        Log.d("ko", "Part1")
 
         val launcher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -88,11 +87,11 @@ class SignInFrag : Fragment() {
             .build()
 
 
-        bind.google.setOnClickListener {
+        bind.enailLogin.setOnClickListener {
 
             signInClient = GoogleSignIn.getClient(requireActivity(), gso)
             val signinIntent = signInClient.signInIntent
-            launcher.launch(signinIntent) // Use the declared launcher
+            launcher.launch(signinIntent)
         }
 
 
@@ -211,6 +210,8 @@ class SignInFrag : Fragment() {
             if (it.isSuccessful) {
 
                 findNavController().navigate(R.id.action_signInFrag_to_homeFrag)
+                Toast.makeText(requireActivity(),"You have successfully logged in",Toast.LENGTH_SHORT).show()
+
 
             } else {
                 Toast.makeText(context, "Cant login", Toast.LENGTH_SHORT).show()
