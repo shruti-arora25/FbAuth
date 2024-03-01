@@ -17,6 +17,7 @@
             android:id="@+id/action_signUpFrag_to_homeFrag"
             app:destination="@id/homeFrag" />
     </fragment>
+
     <fragment
         android:id="@+id/signInFrag"
         android:name="com.example.firebaseone.SignInFrag"

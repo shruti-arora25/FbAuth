@@ -68,24 +68,20 @@ class SignUpFrag : Fragment() {
             }
         }
 
-        val signInOptions= GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.client_id))
             .requestEmail()
             .build()
 
 
         bind.google.setOnClickListener {
-            SignInClient=GoogleSignIn.getClient(requireActivity(),signInOptions)
-            val signinIntent=SignInClient.signInIntent
+            SignInClient = GoogleSignIn.getClient(requireActivity(), signInOptions)
+            val signinIntent = SignInClient.signInIntent
             launcher.launch(signinIntent)
-            save()
-
-
         }
 
         bind.register.setOnClickListener {
 
-              save()
 
 
             val email = bind.emailSignUp.text.toString()
@@ -136,12 +132,16 @@ class SignUpFrag : Fragment() {
         fbAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
 
-                Toast.makeText(requireActivity(),"You have successfully registered and loggedin to your ccount",Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireActivity(),
+                    "You have successfully registered and loggedin to your ccount",
+                    Toast.LENGTH_SHORT
+                ).show()
                 findNavController().navigate(
                     R.id.action_signUpFrag_to_homeFrag,
                     null,
-                    NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build())
-
+                    NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
+                )
 
 
             }

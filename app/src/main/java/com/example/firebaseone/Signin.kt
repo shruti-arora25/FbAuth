@@ -134,7 +134,6 @@ class Signin : AppCompatActivity() {
                    // Log.e("FirestoreError", "Error occurred: ${e.message}", e)
                     Toast.makeText(this, "Error Occurred: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-           // Toast.makeText(this, "Error Occurred", Toast.LENGTH_SHORT).show()
 
 
         } else {

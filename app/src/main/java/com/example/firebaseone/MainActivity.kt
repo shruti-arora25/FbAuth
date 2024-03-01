@@ -20,10 +20,10 @@ class MainActivity : AppCompatActivity() {
         bind = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
-//        bind.signInButton.setOnClickListener {
-//            val i=Intent(this,Signin::class.java)
-//            startActivity(i)
-//        }
+        bind.signInButton.setOnClickListener {
+            val i=Intent(this,Signin::class.java)
+            startActivity(i)
+        }
 
 
 

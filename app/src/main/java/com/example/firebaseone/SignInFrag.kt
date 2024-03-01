@@ -1,5 +1,6 @@
 package com.example.firebaseone
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -64,6 +66,7 @@ class SignInFrag : Fragment() {
         return bind.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,18 +83,27 @@ class SignInFrag : Fragment() {
             }
 
 
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.client_id))
             .requestEmail()
             .build()
 
 
-        bind.enailLogin.setOnClickListener {
-
+//        bind.enailLogin.setOnTouchListener { _, event ->
+//            if (event.action == MotionEvent.ACTION_UP) {
+//                signInClient = GoogleSignIn.getClient(requireActivity(), gso)
+//                val signinIntent = signInClient.signInIntent
+//                launcher.launch(signinIntent)
+//                true
+//            } else {
+//                false
+//            }
+//        }
+        bind.google.setOnClickListener {
             signInClient = GoogleSignIn.getClient(requireActivity(), gso)
             val signinIntent = signInClient.signInIntent
             launcher.launch(signinIntent)
+            save()
         }
 
 
@@ -105,13 +117,14 @@ class SignInFrag : Fragment() {
                 fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
                         save()
-//                        findNavController().navigate(
-//                            R.id.action_signInFrag_to_homeFrag,
-//                            null,
-//                            NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
-//                        )
-                    }
-                    else {
+
+
+                        findNavController().navigate(
+                            R.id.action_signInFrag_to_homeFrag,
+                            null,
+                            NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
+                        )
+                    } else {
                         Toast.makeText(
                             context,
                             "Incorrect Email id or password",
@@ -124,6 +137,8 @@ class SignInFrag : Fragment() {
                 Toast.makeText(context, "fields can't be empty", Toast.LENGTH_SHORT).show()
             }
         }
+
+
 
 
         bind.createAccount.setOnClickListener {
@@ -159,6 +174,53 @@ class SignInFrag : Fragment() {
     }
 
 
+
+    private fun save() {
+        val email = bind.enailLogin.text.toString().trim()
+        val pw = bind.passwordLogin.text.toString().trim()
+        val timestamp: Long = Date().getTime()
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val formattedDate = sdf.format(Date(timestamp))
+
+        val map = hashMapOf(
+            Address to email,
+            Credential to pw,
+            time to formattedDate
+
+        )
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            if (isAdded) {
+                db.collection("USER").document(userId).set(map).addOnSuccessListener {
+
+
+                    Toast.makeText(context, "Successfullly saved", Toast.LENGTH_SHORT)
+                        .show()
+
+                    findNavController().navigate(
+                        R.id.action_signInFrag_to_homeFrag,
+                        null,
+                        NavOptions.Builder().setPopUpTo(R.id.signInFrag, true).build()
+                    )
+
+                }
+
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            requireActivity(),
+                            "Error Occurred: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+        }
+        else {
+            Toast.makeText(requireActivity(), "UserError Occurred", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     private fun compareEMail(email: EditText) {
         if (email.text.toString().isEmpty()) {
             Toast.makeText(context, "Enter Email Address correctly", Toast.LENGTH_SHORT).show()
@@ -181,15 +243,10 @@ class SignInFrag : Fragment() {
                 if (result.resultCode == Activity.RESULT_OK) {
                     val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                     handleResults(task)
-
                 }
-
-
             }
         launcher.launch(signinIntent)
-
     }
-
 
     private fun handleResults(task: Task<GoogleSignInAccount>) {
         if (task.isSuccessful) {
@@ -208,9 +265,14 @@ class SignInFrag : Fragment() {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         fbAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
+                save()
 
                 findNavController().navigate(R.id.action_signInFrag_to_homeFrag)
-                Toast.makeText(requireActivity(),"You have successfully logged in",Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireActivity(),
+                    "You have successfully logged in",
+                    Toast.LENGTH_SHORT
+                ).show()
 
 
             } else {
@@ -221,48 +283,7 @@ class SignInFrag : Fragment() {
     }
 
 
-    private fun save() {
-        val email = bind.enailLogin.text.toString().trim()
-        val pw = bind.passwordLogin.text.toString().trim()
-        val timestamp: Long = Date().getTime()
 
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val formattedDate = sdf.format(Date(timestamp))
-
-        val map = hashMapOf(
-            Address to email,
-            Credential to pw,
-            time to formattedDate
-
-        )
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            db.collection("USER").document(userId).set(map).addOnSuccessListener {
-
-
-                Toast.makeText(requireActivity(), "Successfullly saved", Toast.LENGTH_SHORT).show()
-
-                findNavController().navigate(
-                    R.id.action_signInFrag_to_homeFrag,
-                    null,
-                    NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
-                )
-
-            }
-                .addOnFailureListener { e ->
-                    // Log.e("FirestoreError", "Error occurred: ${e.message}", e)
-                    Toast.makeText(
-                        requireActivity(),
-                        "Error Occurred: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            // Toast.makeText(this, "Error Occurred", Toast.LENGTH_SHORT).show()
-
-
-        }
-
-    }
 }
 
 
