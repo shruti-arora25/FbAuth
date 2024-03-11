@@ -189,11 +189,10 @@ class SignInFrag : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             if (isAdded) {
-                db.collection("USER").document(userId).
-                set(map).addOnSuccessListener {
+                db.collection("USER").document(userId).set(map).addOnSuccessListener {
 
 
-                    Toast.makeText(requireContext(), "Successfullly saved", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, "Successfully saved", Toast.LENGTH_SHORT)
                         .show()
 
                     findNavController().navigate(
@@ -265,15 +264,16 @@ class SignInFrag : Fragment() {
             if (it.isSuccessful) {
                 save()
 
-                findNavController().navigate(R.id.action_signInFrag_to_homeFrag)
-                Toast.makeText(
-                    requireActivity(),
-                    "You have successfully logged in",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-
-            } else {
+//                findNavController().navigate(R.id.action_signInFrag_to_homeFrag)
+//                Toast.makeText(
+//                    context,
+//                    "You have successfully logged in",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//
+//
+            }
+            else {
                 Toast.makeText(context, "Cant login", Toast.LENGTH_SHORT).show()
             }
         }

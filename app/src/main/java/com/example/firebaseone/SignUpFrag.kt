@@ -130,7 +130,7 @@ class SignUpFrag : Fragment() {
             if (it.isSuccessful) {
 
                 Toast.makeText(
-                   requireActivity(),
+                   context,
                     "You have successfully registered and loggedin to your account",
                     Toast.LENGTH_SHORT
                 ).show()

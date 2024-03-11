@@ -9,7 +9,7 @@
     <!-- TODO: Update blank fragment layout -->
     <ImageView
         android:id="@+id/addImage"
-        android:src="@drawable/addimage"
+        android:src="@drawable/image"
         android:layout_gravity="center"
         android:layout_marginTop="15dp"
         android:layout_width="350dp"

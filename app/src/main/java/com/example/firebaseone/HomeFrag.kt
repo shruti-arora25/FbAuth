@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.firebaseone.databinding.FragmentHomeBinding
@@ -35,15 +36,22 @@ class HomeFrag : Fragment() {
 
 
     private var imageUri: Uri?=null
+    private var pdfUri: Uri? = null
 
-    private val resultLauncher=registerForActivityResult(ActivityResultContracts.GetContent()){
+    private val resultLauncherImg=registerForActivityResult(ActivityResultContracts.GetContent()){
 
         imageUri=it
         bind.addImage.setImageURI(it)
 
-
     }
 
+    private val launcherPdf=registerForActivityResult(ActivityResultContracts.GetContent()){uri->
+        pdfUri=uri
+        val filename=uri?.let {
+            DocumentFile.fromSingleUri(requireContext(),it)?.name}
+            bind.fileName.text=filename.toString()
+
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,11 +63,10 @@ class HomeFrag : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-
         bind = FragmentHomeBinding.inflate(layoutInflater, container, false)
 
         initVars()
-        registerClickEvent()
+        registerClickImage()
 
 
 
@@ -79,6 +86,14 @@ class HomeFrag : Fragment() {
             }
 
         }
+
+        bind.addPdf.setOnClickListener {
+            launcherPdf.launch("application/pdf")
+
+
+        }
+
+
         return bind.root
     }
 
@@ -99,7 +114,9 @@ class HomeFrag : Fragment() {
         fbfirestore=FirebaseFirestore.getInstance()
     }
 
-    private fun registerClickEvent() {
+
+
+    private fun registerClickImage() {
         bind.upload.setOnClickListener {
             uploadImage()
 
@@ -112,7 +129,7 @@ class HomeFrag : Fragment() {
 
 
         bind.addImage.setOnClickListener {
-            resultLauncher.launch("image/*")
+            resultLauncherImg.launch("image/*")
         }
     }
 
@@ -139,7 +156,7 @@ class HomeFrag : Fragment() {
                             else{
                                 Toast.makeText(context,task.exception?.message,Toast.LENGTH_SHORT).show()
                             }
-                            bind.addImage.setImageResource(R.drawable.addimage)
+                            bind.addImage.setImageResource(R.drawable.image)
                         }
 
                     }
@@ -154,6 +171,10 @@ class HomeFrag : Fragment() {
         }
 
     }
+
+
+
+
 
 
 }
