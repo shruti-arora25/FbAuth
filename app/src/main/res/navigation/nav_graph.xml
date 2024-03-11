@@ -38,5 +38,13 @@
         <action
             android:id="@+id/action_homeFrag_to_signInFrag"
             app:destination="@id/signInFrag" />
+        <action
+            android:id="@+id/action_homeFrag_to_contentFrag"
+            app:destination="@id/contentFrag" />
     </fragment>
+    <fragment
+        android:id="@+id/contentFrag"
+        android:name="com.example.firebaseone.ContentFrag"
+        android:label="fragment_content"
+        tools:layout="@layout/fragment_content" />
 </navigation>

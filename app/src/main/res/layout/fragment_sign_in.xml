@@ -119,18 +119,14 @@
                 android:id="@+id/google"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login using google account"
-                android:background="@drawable/textbg"
                 android:layout_gravity="center"
                 android:layout_margin="22dp"
-                android:padding="10dp"
+                android:background="@drawable/textbg"
                 android:drawableLeft="@drawable/search"
                 android:drawablePadding="10dp"
-                android:textSize="15sp"
-                ></android.widget.Button>
-
-
-
+                android:padding="10dp"
+                android:text="Login using google account"
+                android:textSize="15sp"></android.widget.Button>
 
 
         </LinearLayout>

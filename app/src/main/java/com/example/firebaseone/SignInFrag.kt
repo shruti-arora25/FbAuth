@@ -48,9 +48,6 @@ class SignInFrag : Fragment() {
     private val time = "Time"
 
 
-    override fun onAttach(context: Context) { // Or onCreate(savedInstanceState: Bundle?)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,7 +189,8 @@ class SignInFrag : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             if (isAdded) {
-                db.collection("USER").document(userId).set(map).addOnSuccessListener {
+                db.collection("USER").document(userId).
+                set(map).addOnSuccessListener {
 
 
                     Toast.makeText(requireContext(), "Successfullly saved", Toast.LENGTH_SHORT)

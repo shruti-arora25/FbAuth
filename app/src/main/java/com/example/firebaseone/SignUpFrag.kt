@@ -37,7 +37,7 @@ class SignUpFrag : Fragment() {
     private val EMAIL = "email"
     private val PASSWORD = "password"
     private val DOCUMENTS = "documents"
-    private val COLLECTION = "colllection"
+    private val COLLECTION = "collection"
     private val time = "Register Time"
 
 
@@ -78,11 +78,11 @@ class SignUpFrag : Fragment() {
             SignInClient = GoogleSignIn.getClient(requireActivity(), signInOptions)
             val signinIntent = SignInClient.signInIntent
             launcher.launch(signinIntent)
+            save()
         }
 
+
         bind.register.setOnClickListener {
-
-
 
             val email = bind.emailSignUp.text.toString()
             val password = bind.passwordSignUp.text.toString()
@@ -121,10 +121,7 @@ class SignUpFrag : Fragment() {
                 null,
                 NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
             )
-
         }
-
-
     }
 
     private fun updateUI(account: GoogleSignInAccount?) {
@@ -133,8 +130,8 @@ class SignUpFrag : Fragment() {
             if (it.isSuccessful) {
 
                 Toast.makeText(
-                    requireActivity(),
-                    "You have successfully registered and loggedin to your ccount",
+                   requireActivity(),
+                    "You have successfully registered and loggedin to your account",
                     Toast.LENGTH_SHORT
                 ).show()
                 findNavController().navigate(
@@ -143,10 +140,8 @@ class SignUpFrag : Fragment() {
                     NavOptions.Builder().setPopUpTo(R.id.signUpFrag, true).build()
                 )
 
-
             }
         }
-
 
     }
 
