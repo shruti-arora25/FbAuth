@@ -49,7 +49,21 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:progress="80"
+                android:visibility="visible"
+                android:layout_gravity="center"
+
+
+
+                />
 
             <android.widget.Button
                 android:id="@+id/addPdf"
@@ -65,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="10dp"
-                android:text="No file is selected yet!"
+                android:text="@string/no_file_is_selected_yet"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

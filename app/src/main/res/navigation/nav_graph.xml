@@ -44,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/contentFrag"
-        android:name="com.example.firebaseone.ContentFrag"
+        android:name="com.example.firebaseone.ShowImages"
         android:label="fragment_content"
         tools:layout="@layout/fragment_content" />
 </navigation>

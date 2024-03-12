@@ -9,11 +9,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebaseone.databinding.FragmentContentBinding
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 
 
-class ContentFrag : Fragment() {
+class ShowImages : Fragment() {
 
     private lateinit var bind: FragmentContentBinding
     private lateinit var fbfireStore: FirebaseFirestore

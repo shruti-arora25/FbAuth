@@ -1,16 +1,13 @@
 package com.example.firebaseone
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore.Images
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
 import androidx.navigation.NavOptions
@@ -20,6 +17,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -29,6 +28,10 @@ class HomeFrag : Fragment() {
 
     private lateinit var bind: FragmentHomeBinding
     private lateinit var storageRef: StorageReference
+
+    private lateinit var RealtimedbRef:DatabaseReference
+    private lateinit var storageRefPdf: StorageReference
+
     private lateinit var fbfirestore: FirebaseFirestore
 
     private lateinit var fbAuth: FirebaseAuth
@@ -39,10 +42,8 @@ class HomeFrag : Fragment() {
     private var pdfUri: Uri? = null
 
     private val resultLauncherImg=registerForActivityResult(ActivityResultContracts.GetContent()){
-
         imageUri=it
         bind.addImage.setImageURI(it)
-
     }
 
     private val launcherPdf=registerForActivityResult(ActivityResultContracts.GetContent()){uri->
@@ -68,6 +69,10 @@ class HomeFrag : Fragment() {
         initVars()
         registerClickImage()
 
+        initvar()
+        registerPdf()
+
+
 
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -87,13 +92,6 @@ class HomeFrag : Fragment() {
 
         }
 
-        bind.addPdf.setOnClickListener {
-            launcherPdf.launch("application/pdf")
-
-
-        }
-
-
         return bind.root
     }
 
@@ -105,6 +103,91 @@ class HomeFrag : Fragment() {
             null,
             NavOptions.Builder().setPopUpTo(R.id.homeFrag, true).build()
         )
+
+    }
+
+
+
+
+
+
+
+    private fun initvar(){
+        storageRefPdf=FirebaseStorage.getInstance().reference.child("pdf")
+        RealtimedbRef=FirebaseDatabase.getInstance().reference.child("pdf")
+
+    }
+
+    private fun registerPdf(){
+        bind.addPdf.setOnClickListener {
+            launcherPdf.launch("application/pdf")
+
+        }
+
+        bind.uploadPdf.setOnClickListener {
+            if (pdfUri!=null){
+                uploadFile()
+            }
+            else{
+                Toast.makeText(context,"Please select pdf first",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+
+    }
+
+    private fun uploadFile(){
+        val fileName=bind.fileName.text.toString()
+        val mstorageRef=storageRefPdf.child("${System.currentTimeMillis()}/${fileName}")
+        pdfUri.let {uri ->
+            uri?.let { mstorageRef.putFile(it).addOnSuccessListener {
+
+                mstorageRef.downloadUrl.addOnSuccessListener {
+                    downloadUri->
+
+                    val pdfFile=PdfFile(fileName,downloadUri.toString())
+                    RealtimedbRef.push().key?.let {
+                        pushkey->
+
+                        RealtimedbRef.child(pushkey).setValue(pdfFile).addOnSuccessListener {
+
+
+                            pdfUri=null
+                            bind.fileName.text=resources.getString(R.string.no_file_is_selected_yet)
+
+                            Toast.makeText(context,"Uploaded pdf successfully",Toast.LENGTH_SHORT).show()
+
+                            if (bind.progressBar.isShown)
+                                bind.progressBar.visibility=View.GONE
+                        }
+                            .addOnFailureListener{
+                                Toast.makeText(context,it.message.toString(),Toast.LENGTH_SHORT).show()
+
+                                if (bind.progressBar.isShown)
+                                    bind.progressBar.visibility=View.GONE
+
+                            }
+
+                    }
+                }
+            }
+                .addOnProgressListener {
+                    uploadTask->
+
+                    val uploadingPercent=uploadTask.bytesTransferred*100/uploadTask.totalByteCount
+                    bind.progressBar.progress=uploadingPercent.toInt()
+                    if (!bind.progressBar.isShown)
+                        bind.progressBar.visibility=View.VISIBLE
+
+                }
+                .addOnFailureListener{
+                    if (bind.progressBar.isShown)
+                        bind.progressBar.visibility=View.GONE
+            }
+
+            }
+        }
 
     }
 
@@ -136,7 +219,8 @@ class HomeFrag : Fragment() {
     private fun uploadImage(){
 
         storageRef=storageRef.child(System.currentTimeMillis().toString())
-        imageUri?.let { storageRef.putFile(it).addOnCompleteListener {task->
+        imageUri?.let {
+            storageRef.putFile(it).addOnCompleteListener {task->
 
                 if (task.isSuccessful){
                     storageRef.downloadUrl.addOnSuccessListener { uri->
@@ -144,10 +228,8 @@ class HomeFrag : Fragment() {
                         val maps=HashMap<String,Any>()
                         maps["pic"]=uri.toString()
 
-                        Log.d("TAG------------>","done")
                         fbfirestore.collection("images").add(maps).addOnCompleteListener { firestoreTask->
 
-                            Log.d("TAG------------>","doneFirestore")
 
 
                             if (firestoreTask.isSuccessful){
