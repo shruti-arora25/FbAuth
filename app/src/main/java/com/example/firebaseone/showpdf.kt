@@ -38,11 +38,6 @@ class showpdf : Fragment(), pdfAdapter.onClickListen {
         initRecyclerView()
         getPdf()
 
-
-
-
-
-
         return bind.root
     }
 
@@ -92,8 +87,6 @@ class showpdf : Fragment(), pdfAdapter.onClickListen {
     }
 
     override fun pdfClicked(pdfFile: PdfFile) {
-
-
 
     }
 
