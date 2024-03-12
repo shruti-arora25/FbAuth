@@ -19,6 +19,7 @@
 
 
         <ImageView
+            android:id="@+id/pdfPic"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/baseline_insert_drive_file_24"
@@ -26,6 +27,7 @@
             app:tint="@color/blueGreen" />
 
         <TextView
+            android:id="@+id/pdfText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

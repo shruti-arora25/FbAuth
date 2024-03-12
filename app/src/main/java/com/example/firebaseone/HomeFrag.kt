@@ -133,6 +133,9 @@ class HomeFrag : Fragment() {
             }
 
         }
+        bind.showPdf.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFrag_to_showpdf)
+        }
 
 
     }

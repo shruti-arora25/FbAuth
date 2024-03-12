@@ -41,10 +41,18 @@
         <action
             android:id="@+id/action_homeFrag_to_contentFrag"
             app:destination="@id/contentFrag" />
+        <action
+            android:id="@+id/action_homeFrag_to_showpdf"
+            app:destination="@id/showpdf" />
     </fragment>
     <fragment
         android:id="@+id/contentFrag"
         android:name="com.example.firebaseone.ShowImages"
         android:label="fragment_content"
         tools:layout="@layout/fragment_content" />
+    <fragment
+        android:id="@+id/showpdf"
+        android:name="com.example.firebaseone.showpdf"
+        android:label="fragment_showpdf"
+        tools:layout="@layout/fragment_showpdf" />
 </navigation>
